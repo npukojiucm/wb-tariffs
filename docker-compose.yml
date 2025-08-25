@@ -1,0 +1,30 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: wb-postgres
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: wb-app
+    restart: always
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+    environment:
+      - DOCKER_ENV=true
+    ports:
+      - "3000:3000"
+    command: npm run start
+
+volumes:
+  postgres_data:
